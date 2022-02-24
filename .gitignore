@@ -1,0 +1,10 @@
+Movie*.mkv
+test*
+config
+config.php
+schedule.php
+video_pid
+.*swp
+image*.jpg
+log.txt
+lecture_capture_*

@@ -1,0 +1,43 @@
+#!/bin/bash -f
+
+# This script, when executed, will start captureing photos from the specified device
+SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+cd ${SCRIPT_DIR};
+
+
+
+source config
+
+photodevice=$1;
+
+
+echo $photodevice;
+
+case $photodevice in
+	"")
+	       echo "Please Specify a photo device"
+	       exit
+	       ;;
+	 *)
+		 ;;
+esac
+
+
+#this is a function that will capture a single frame from the first argument and save it into the second argument
+function capture_photo () {
+#	gst-launch-1.0 v4l2src device=$1 num-buffers=1 ! jpegenc ! filesink location=$2
+#	gst-launch-1.0 v4l2src device=$1 num-buffers=1 ! video/x-raw ! jpegenc ! filesink location=$2 1> /dev/null
+	gst-launch-1.0 v4l2src device=$1 num-buffers=1 ! image/jpeg ! filesink location=$2 1> /dev/null
+}
+
+
+while [ ! -f terminate ]; do
+	filename="image_`date +"%Y_%m_%d_%H:%M:%S"`.jpg"
+	capture_photo $1 $filename
+	curlstring="${coursehostprotocol}://${coursehost}/${coursehostpathtogetphoto}?filename=$filename&streaminghost=$capturinghost&classroom=$CLASSROOM&save=${SAVE}" 
+	echo $curlstring >> log.txt
+	curl $curlstring >> log.txt 2>> log.txt
+	#curl $curlstring > /dev/null 2> /dev/null
+	mv $filename test.jpg
+	sleep 10
+done
