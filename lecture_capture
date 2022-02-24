@@ -1,0 +1,108 @@
+#!/bin/bash -f
+#if the video is to be saved, i am sending a variable SAVE=1
+#test if SAVE=1, and if so make necessary changes to save the video.
+#I can use tee to dublicate the stream, and probably matruskamux to save the video as mkv.
+#I will also send another varialbe ONLYVIDEO=1 if pictures are not required.
+
+source config
+#this is the directory of the script. capture_photos is assumed to be in this directory
+SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+cd ${SCRIPT_DIR}
+
+echo "running lecture capture in the folder"
+echo ${SCRIPT_DIR}
+echo "\n"
+
+function find_device_for () {
+	case $1 in
+		video) 
+			echo "/dev/video0"
+			;;
+		audio)
+			echo "pulsesrc device=alsa_input.usb-Kingston_HyperX_SoloCast-00.analog-stereo"
+			;;
+		photo) 
+			echo "/dev/video2"
+			;;
+		*)	echo "You should ask for a device for video, audio or photo"
+			exit
+			;;
+	esac
+}
+
+function lecture_stop() {
+	echo "Stopping streaming..."
+	echo "Stopping video..."
+	kill `cat video_pid`
+	sleep 1
+	if ps -p `cat video_pid` > /dev/null
+	then
+		echo "Video streaming process is still running. Retrying to kill it"
+		killall gst-launch-1.0
+	else 
+		echo "Killed video stream..."
+		rm video_pid
+	fi
+#just to make sure, kill all gst processes
+	touch "terminate"
+};
+
+
+
+function lecture_start() {
+	if [ -f video_pid ] 
+	then
+		echo "Previous pid file present. Trying to checking if still streaming"
+		if ps -p `cat video_pid` > /dev/null
+		then
+			echo "previous instance is still streaming."
+			lecture_stop
+		fi
+	fi
+	if [ -f terminate ] 
+	then
+		rm terminate
+	fi 
+	echo "Starting streaming...";
+	echo "Starting video stream..."
+	videodevice=$(find_device_for video)
+	audiodevice=$(find_device_for audio)
+	echo "Using $videodevice for video..."
+#to add the saving feature, I have added this if clauses. and also in the line for gst-launch-1.0, I added the tee elements along 
+#with the following queue pipes. I need to check how it works when I go back home, but it seems to slow down streaming. if this is
+#the case, I might look for a solution which will save the file on the webserver. This solution might even be better since
+#if i can implement this, i will not need to transfer the movie to the webserver later on. Everything will be stored on the webserver.
+	if test ${SAVE} -gt 0 
+	then
+		echo "Will save the video to $FILENAME"
+		savestring=" tv. ! queue ! matroskamux name=mux ! filesink location=$FILENAME "
+	       savestring=$savestring"	ta. ! queue ! mux."
+	       echo $savestring
+	else
+		echo "Will not save the video"
+		savestring="";
+	fi
+	gst-launch-1.0  -e \
+		$audiodevice ! audioresample ! audio/x-raw,channels=1,rate=16000 ! audioamplify amplification=5 ! queue ! opusenc bitrate=20000 ! tee name=ta ! queue ! rtpopuspay !udpsink host=$streaminghost port=$audioport \
+		v4l2src device=$videodevice ! video/x-raw,width=320,height=240,framerate=30/1 ! videoconvert ! clockoverlay font-desc=Sans,20 ! queue ! \
+		v4l2h264enc  ! 'video/x-h264,level=(string)3,bitrate=30000'  ! h264parse ! tee name=tv ! queue ! rtph264pay config-interval=-1 ! udpsink host=$streaminghost port=$videoport  $savestring 1> /dev/null&
+	videopid=$!;
+	echo $videopid > video_pid
+	echo "Started streaming with PID: $videopid"
+	echo "Started capturing photos..."
+	photodevice=$(find_device_for photo)
+	echo "Using $photodevice for photo capture..."
+	SAVE=${SAVE} CLASSROOM=$CLASSROOM ${SCRIPT_DIR}/capture_photos $photodevice &
+};
+
+case $1 in
+	start) 
+		lecture_start
+		;;
+	stop)
+		lecture_stop
+		;;
+	*) echo "Usage: lecture_capture start|stop";;
+esac
+
+
