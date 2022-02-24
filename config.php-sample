@@ -1,0 +1,16 @@
+<?php
+
+$classroom = "P426";
+//this is the server where janus is running
+$mediaserver="http://ume-17.ume.metu.edu.tr";
+//this is the web page server
+$server="http://ume-17.ume.metu.edu.tr:8080";
+//the scripts in the webpage server are in this folder. in particular getphoto.php is here
+$serverroot="~ozpineci/courses/";
+//the recording will start this much seconds before the starttime
+$pretime=120;
+//this is the folder where the lecture_start script is located. In general, it will be in the same folder as config.php. If not, this
+//should be modified
+$scriptfolder=__DIR__;
+
+?>

@@ -1,0 +1,28 @@
+#This is the source file. define all variables here so that I will not need to search files to change the variables
+
+#this is the host where janus is running. Change based on your janus setup.
+streaminghost="XXX.XXX.XXX.XXX"
+audioport="NNNN"
+videoport="NNNN"
+
+#this is the host where the webpage for the course is accessed
+#this can be different than streaminghost
+#you can ignore the port 8080 if you use thedefault port 80
+coursehost="sample.com:8080"
+#this is the protocol to use to access the host where the course is hosted. http or https
+coursehostprotocol="http"
+
+#coursehost should be able to run php. As a workaround for transfering the photons to the coursehost
+#I wuse curl to execute a php script in the host which downloads the most recent photo.
+#in this case it is assumed the getphoto.php is in the homepage of the user "user" within a folder courses. change as
+#needed.
+coursehostpathtogetphoto="~user/courses/getphoto.php"
+
+
+#this is the IP of the streaming host. xargs trims the spaces from the beginnig and the end.
+capturinghost=`hostname -I | xargs`
+
+#this is (i did not check if it solves my problem) about pulsesrc. it is necessary to use config in a file executed by cron.
+#https://wiki.archlinux.org/title/PulseAudio#Play_sound_from_a_non-interactive_shell_(systemd_service,_cron)
+
+export XDG_RUNTIME_DIR="/run/user/`id -u`"
