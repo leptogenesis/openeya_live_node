@@ -1,3 +1,4 @@
+#!/usr/bin/php 
 <?php
 
 //This script will take a two arguments
@@ -8,8 +9,8 @@
 
 //read the configuretaion
 
-require_once("../config.php");
-require_once("../functions.php");
+require_once(__DIR__."/../config.php");
+require_once(__DIR__."/../functions.php");
 
 // Make sure that the script is called with an argument
 //
@@ -48,10 +49,12 @@ if (!file_exists($filename)) {
 // courseinfo is not necessary as all the information is already contained in the movie filename
 $capturinghost=shell_exec("hostname -I | xargs");
 $CLASSROOM=$classroom;
-$transferstring=$server."/getphoto.php?filename=".$filename."&streaminghost=".$capturinghost."&classroom=".$CLASSROOM."&save=1&movie=1;
+$transferstring=$server."/getphoto.php?filename=".$filename."&streaminghost=".$capturinghost."&classroom=".$CLASSROOM."&save=1&movie=1";
 echo $transferstring;
 
-$reply = "call the getphoto and get the reply when the transfer is over";
+$reply = shell_exec("curl ".$transferstring);
+
+echo $reply;
 
 if ($reply == "OK") {unlink($filename);} else {echo "the file is not deleted as it is not trasnfered properly";};
 //$fh = fopen($pathtocapturefolder.$filename,"w");
