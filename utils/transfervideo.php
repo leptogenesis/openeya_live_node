@@ -22,7 +22,7 @@ if ($argc != 2) {
 print_r($argv);
 try {
 	$filename=$argv[1];
-} catch (Exception) {
+} catch (Exception $ex) {
 	echo "can not obtain the filename from the provided arguments";
 	exit;
 }
