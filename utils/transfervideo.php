@@ -47,12 +47,12 @@ if (!file_exists($filename)) {
 //	courseinfo=... (this is not necessary for the photos since it transfers while the course is proceeding. This is
 //			not the case for the video )
 // courseinfo is not necessary as all the information is already contained in the movie filename
-$capturinghost=shell_exec("hostname -I | xargs");
+$capturinghost=trim(shell_exec("hostname -I | xargs"));
 $CLASSROOM=$classroom;
 $transferstring=$server."/getphoto.php?filename=".$filename."&streaminghost=".$capturinghost."&classroom=".$CLASSROOM."&save=1&movie=1";
 echo $transferstring;
 
-$reply = shell_exec("curl ".$transferstring);
+$reply = shell_exec('curl "'.$transferstring.'"');
 
 echo $reply;
 
