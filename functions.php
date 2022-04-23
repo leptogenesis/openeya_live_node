@@ -118,4 +118,26 @@ function am_i_streaming() {
 	if ($check) {flog("I am streaming");} else {flog("I am not streaming");};
 	return $check;
 };
+
+// this function will read the variable from the config file
+// the variable should appear at the beginnig of the line (spaces are fine)
+// the string will be devided from the equality sign, if the first element of the array matches the $variable, the second element will
+// be returnd
+//
+function bashconfig($file,$variable)
+{
+	$string=file_get_contents($file);
+	//this line replaces double quuotes with nothing
+	$string = str_replace('"',"",$string);
+	$lines = explode("\n",$string);
+	$result = "No Value Set";
+	foreach ($lines as $line) {
+		$tline = trim($line);
+		$parts = explode("=",$tline);
+		if ((string)$parts[0] == $variable ) {$result = $parts[1];};
+		if (count($parts) > 2) {echo "the should be only one equality sign. This is an error";};
+	};
+	return $result;
+};
+
 ?>
