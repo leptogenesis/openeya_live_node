@@ -39,6 +39,13 @@ if ( ($should_i_stream && $am_i_streaming) || (!$should_i_stream && !$am_i_strea
 } else if (!$should_i_stream && $am_i_streaming) {
 	flog("trying to stop streaming");
 	shell_exec("./lecture_capture stop > /dev/null 2>/dev/null &");
+	//now I should transfer the last movie to the server
+	$filelist = glob(__DIR__."/Movie*.mkv");
+	usort($filelist, function($a, $b) {
+		    return filemtime($b) - filemtime($a);
+	});
+	$filetotransfer = $filelist[count($filelist)-1];
+	shell_exec(".utils/transfervideo.php ".$filetotransfer);
 	#add command that would stop the streaming. make sure that it did actually stop
 } else {
 	flog("I should never reach here. There is a problem");
