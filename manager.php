@@ -44,9 +44,14 @@ if ( ($should_i_stream && $am_i_streaming) || (!$should_i_stream && !$am_i_strea
 	usort($filelist, function($a, $b) {
 		    return filemtime($b) - filemtime($a);
 	});
-	$filetotransfer = $filelist[count($filelist)-1];
-	shell_exec(".utils/transfervideo.php ".$filetotransfer);
-	#add command that would stop the streaming. make sure that it did actually stop
+	$filetotransfer = $filelist[0];
+	//filetotrasner is the full path. I need the file name only
+	$filetotransfer = explode("/",$filetotransfer);
+	$filetotransfer = $filetotransfer[count($filetotransfer)-1];
+	$execstring = __DIR__."/utils/transfervideo.php ".$filetotransfer;
+	echo "trying to trasnfer video executing ".$execstring;
+	$result = shell_exec($execstring);
+	print_r($result);
 } else {
 	flog("I should never reach here. There is a problem");
 };
