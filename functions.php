@@ -44,7 +44,7 @@ function should_i_be_streaming() {
 	$schedule=file_get_contents("schedule.php");
 	$schedule=json_decode($schedule);
 	//this is the current time
-	$now = strtotime(date("H:i"));
+	$now = strtotime(date("H_i"));
 	//now go over all the defined times and check
 	foreach ($schedule as $time => $info) {
 		$starttime = strtotime($time);

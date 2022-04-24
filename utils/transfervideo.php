@@ -56,7 +56,13 @@ $reply = shell_exec('curl "'.$transferstring.'"');
 
 echo $reply;
 
-if (substr_count($reply,"file received OK") > 0 ) {unlink($filename);} else {echo "the file is not deleted as it is not trasnfered properly";};
+if (substr_count($reply,"file received OK") > 0 ) {
+       echo "file transfered successfully. Deleting the local file"; 
+       unlink($filename);
+} else {
+       echo "the file is not deleted as it is not transferred properly";
+};
+
 //$fh = fopen($pathtocapturefolder.$filename,"w");
 //$ch = curl_init();
 //echo "was here\n";

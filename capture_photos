@@ -32,7 +32,7 @@ function capture_photo () {
 
 
 while [ ! -f terminate ]; do
-	filename="image_`date +"%Y_%m_%d_%H:%M:%S"`.jpg"
+	filename="image_`date +"%Y_%m_%d_%H_%M_%S"`.jpg"
 	capture_photo $1 $filename
 	curlstring="${coursehostprotocol}://${coursehost}/${coursehostpathtogetphoto}?filename=$filename&streaminghost=$capturinghost&classroom=$CLASSROOM&save=${SAVE}" 
 	echo $curlstring >> log.txt
