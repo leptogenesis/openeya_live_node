@@ -5,7 +5,7 @@
 //	i. the name of the movie file
 //
 //the second one is necessary so that get photo can determine where to save the movie. 
-//the script will then call getphoto.php with the iven information and hence start a transfer
+//the script will then call getphoto.php with the given information and hence start a transfer
 
 //read the configuretaion
 

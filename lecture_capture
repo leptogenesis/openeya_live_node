@@ -22,7 +22,7 @@ function find_device_for () {
 			echo "pulsesrc device=alsa_input.usb-Kingston_HyperX_SoloCast-00.analog-stereo"
 			;;
 		photo) 
-			echo "/dev/video2"
+			echo "/dev/video1"
 			;;
 		*)	echo "You should ask for a device for video, audio or photo"
 			exit
