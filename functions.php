@@ -77,7 +77,7 @@ function should_i_save_the_lecture() {
 	$course_info = (array) $schedule[$coursetime];
 	//set default to false, and if recorded is chosen, change it to true
 	$check = false;
-	if ($course_info["Recorded"] == "True") {$check=true;};	
+	if ($course_info["Recorded"]) {$check=true;};	
 	return $check;
 };
 
@@ -97,7 +97,7 @@ function file_name_to_save_movie() {
 	$course_info = (array) $schedule[$coursetime];
 	//set default to false, and if recorded is chosen, change it to true
 	$filename="Movie.mkv";
-	if ($course_info["Recorded"] == "True") {$filename="Movie_".$course_info["CourseCode"]."_".date("Y_m_d")."_".str_replace(":","_",$coursetime).".mkv";};	
+	if ($course_info["Recorded"]) {$filename="Movie_".$course_info["CourseCode"]."_".date("Y_m_d")."_".str_replace(":","_",$coursetime).".mkv";};	
 	return $filename;
 };
 
